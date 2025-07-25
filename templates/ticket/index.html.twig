@@ -1,0 +1,286 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Tickets{% endblock %}
+
+{% block content %}
+<style>
+    body {
+        background: #f6f8f3;
+    }
+    .tickets-wrapper {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 40px 16px 60px 16px;
+    }
+    .tickets-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 32px;
+        background: #fff;
+        border-radius: 18px;
+        box-shadow: 0 2px 8px rgba(164,198,57,0.10);
+        padding: 24px 32px;
+    }
+    .tickets-header h2 {
+        color: #a4c639;
+        font-size: 2.2rem;
+        font-weight: 700;
+        margin: 0;
+    }
+    .add-ticket-btn {
+        background: linear-gradient(90deg, #a4c639 0%, #d0e97a 100%);
+        color: #fff;
+        border: none;
+        border-radius: 30px;
+        padding: 12px 32px;
+        font-size: 1.1rem;
+        font-weight: 700;
+        box-shadow: 0 2px 8px rgba(164,198,57,0.15);
+        transition: background 0.2s, color 0.2s;
+        cursor: pointer;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+    .add-ticket-btn:hover {
+        background: linear-gradient(90deg, #8ebf1b 0%, #eaf7c1 100%);
+        color: #333;
+    }
+    .add-ticket-zone {
+        max-width: 500px;
+        margin: 0 auto 40px auto;
+        background: #fff;
+        border: 1.5px solid #a4c639;
+        border-radius: 16px;
+        box-shadow: 0 2px 8px rgba(164,198,57,0.08);
+        padding: 28px 24px 18px 24px;
+    }
+    .add-ticket-zone h3 {
+        color: #a4c639;
+        margin-bottom: 18px;
+        text-align: center;
+    }
+    .add-ticket-zone label {
+        font-weight: 600;
+        color: #6a8a1a;
+        margin-bottom: 4px;
+        display: block;
+    }
+    .add-ticket-zone input,
+    .add-ticket-zone textarea,
+    .add-ticket-zone select {
+        width: 100%;
+        padding: 10px 12px;
+        margin-bottom: 16px;
+        border: 1.5px solid #a4c639;
+        border-radius: 6px;
+        background: #f7fbe8;
+        font-size: 1rem;
+        transition: border 0.2s;
+    }
+    .add-ticket-zone input:focus,
+    .add-ticket-zone textarea:focus,
+    .add-ticket-zone select:focus {
+        border-color: #8ebf1b;
+        outline: none;
+    }
+    .add-ticket-zone button[type="submit"] {
+        width: 100%;
+        padding: 12px;
+        background: linear-gradient(90deg, #a4c639 0%, #d0e97a 100%);
+        color: #fff;
+        border: none;
+        border-radius: 6px;
+        font-size: 1.1rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: background 0.2s;
+        box-shadow: 0 2px 8px rgba(164,198,57,0.10);
+        text-shadow: 0 1px 2px rgba(100,100,100,0.10);
+        margin-bottom: 8px;
+    }
+    .add-ticket-zone button[type="submit"]:hover {
+        background: linear-gradient(90deg, #8ebf1b 0%, #eaf7c1 100%);
+        color: #333;
+    }
+    .add-ticket-zone button[type="button"] {
+        width: 100%;
+        padding: 10px;
+        background: #eee;
+        color: #a4c639;
+        border: none;
+        border-radius: 6px;
+        font-size: 1rem;
+        font-weight: 700;
+        cursor: pointer;
+        margin-top: 0;
+    }
+    .tickets-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+        gap: 32px;
+        margin: 0 auto 40px auto;
+    }
+    .ticket-card {
+        background: #fcfff5;
+        border-radius: 18px;
+        box-shadow: 0 4px 24px rgba(164,198,57,0.10);
+        border: 1.5px solid #a4c639;
+        padding: 28px 24px 20px 24px;
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        min-height: 220px;
+        transition: box-shadow 0.2s, transform 0.2s, border 0.2s;
+        overflow: hidden;
+    }
+    .ticket-card:hover {
+        box-shadow: 0 8px 32px rgba(164,198,57,0.18);
+        transform: translateY(-4px) scale(1.03);
+        border: 2px solid #8ebf1b;
+        z-index: 2;
+    }
+    .ticket-title {
+        font-size: 1.3rem;
+        font-weight: 700;
+        color: #a4c639;
+        margin-bottom: 8px;
+        text-align: left;
+    }
+    .ticket-description {
+        color: #444;
+        font-size: 1.05rem;
+        margin-bottom: 18px;
+        flex: 1;
+        min-height: 48px;
+    }
+    .ticket-meta {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 8px;
+        gap: 8px;
+    }
+    .badge {
+        display: inline-block;
+        padding: 5px 16px;
+        border-radius: 14px;
+        font-size: 15px;
+        font-weight: 600;
+        color: #fff;
+        background: #a4c639;
+        box-shadow: 0 1px 4px rgba(164,198,57,0.10);
+        text-shadow: 0 1px 2px rgba(100,100,100,0.10);
+    }
+    .badge-priorite-Basse { background: #6ab04c; }
+    .badge-priorite-Moyenne { background: #e6b800; }
+    .badge-priorite-Haute { background: #eb4d4b; }
+    .btn-outline-primary {
+        border: 2px solid #a4c639;
+        color: #a4c639;
+        font-weight: 600;
+        border-radius: 8px;
+        transition: background 0.2s, color 0.2s;
+    }
+    .btn-outline-primary:hover {
+        background: #a4c639;
+        color: #fff;
+    }
+    .ticket-avatar {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        object-fit: cover;
+        margin-right: 10px;
+        border: 2px solid #e6e6e6;
+    }
+    .ticket-user {
+        display: flex;
+        align-items: center;
+        font-size: 1rem;
+        color: #888;
+        margin-bottom: 8px;
+    }
+    .no-tickets {
+        text-align: center;
+        color: #888;
+        font-size: 1.2rem;
+        margin-top: 60px;
+    }
+    @media (max-width: 600px) {
+        .tickets-header {
+            flex-direction: column;
+            gap: 16px;
+            padding: 16px 8px;
+        }
+        .tickets-header h2 {
+            font-size: 1.3rem;
+        }
+        .add-ticket-btn {
+            width: 100%;
+        }
+    }
+</style>
+
+<div class="tickets-wrapper">
+    <div class="tickets-header">
+        <h2>Liste des tickets</h2>
+        <button class="add-ticket-btn" id="show-add-ticket-btn" type="button">+ Ajouter un ticket</button>
+    </div>
+
+    <div class="add-ticket-zone" id="add-ticket-form" style="display: none;">
+        <h3>Ajouter un ticket</h3>
+        <form method="post" action="{{ path('ticket_store') }}">
+            <label for="titre">Titre</label>
+            <input type="text" id="titre" name="titre" required>
+
+            <label for="description">Description</label>
+            <textarea id="description" name="description" rows="3" required></textarea>
+
+            <label for="priorite">Priorité</label>
+            <select id="priorite" name="priorite" required>
+                <option value="Basse">Basse</option>
+                <option value="Moyenne" selected>Moyenne</option>
+                <option value="Haute">Haute</option>
+
+            </select>
+
+            <input type="hidden" name="statut" value="En attente">
+
+            <button type="submit">Créer le ticket</button>
+            <button type="button" id="hide-add-ticket-btn">Annuler</button>
+        </form>
+    </div>
+
+    <div class="tickets-grid">
+        {% for ticket in tickets %}
+            <div class="ticket-card">
+                <div class="ticket-user">
+                    <img src="{{ asset('assets/images/default-user.png') }}" class="ticket-avatar" alt="avatar">
+                    {{ app.user.nom }} {{ app.user.prenom }}
+                </div>
+                <div class="ticket-title">{{ ticket.titre }}</div>
+                <div class="ticket-description">{{ ticket.description|u.truncate(100, '...') }}</div>
+                <div class="ticket-meta">
+                    <span class="badge">{{ ticket.statut.value }}</span>
+                    <span class="badge badge-priorite-{{ ticket.priorite.value }}">{{ ticket.priorite.value }}</span>
+                    <span class="ticket-date">{{ ticket.dateCreation ? ticket.dateCreation|date('d/m/Y H:i') : '' }}</span>
+                </div>
+                <a href="{{ path('ticket_show', {id: ticket.idTicket}) }}" class="btn btn-sm btn-outline-primary mt-2">Voir</a>
+            </div>
+        {% else %}
+            <div class="no-tickets">Aucun ticket trouvé.</div>
+        {% endfor %}
+    </div>
+</div>
+
+<script>
+    document.getElementById('show-add-ticket-btn').onclick = function() {
+        document.getElementById('add-ticket-form').style.display = 'block';
+        window.scrollTo({ top: document.getElementById('add-ticket-form').offsetTop - 40, behavior: 'smooth' });
+    };
+    document.getElementById('hide-add-ticket-btn').onclick = function() {
+        document.getElementById('add-ticket-form').style.display = 'none';
+    };
+</script>
+{% endblock %}

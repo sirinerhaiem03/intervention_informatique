@@ -1,0 +1,57 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Détail du ticket (Technicien){% endblock %}
+
+{% block content %}
+<div class="ticket-detail-container">
+    <a href="{{ path('technicien_tickets') }}" class="btn-back-arrow-in-card" title="Retour à la liste">&#8592;</a>
+    <div class="ticket-detail-header">
+        <img src="{{ asset('assets/images/default-user.png') }}" class="ticket-avatar" alt="avatar">
+        <div class="ticket-user-info">
+            <span class="ticket-user-name">{{ ticket.utilisateur.nom }} {{ ticket.utilisateur.prenom }}</span>
+            <span class="ticket-date">Créé le {{ ticket.dateCreation|date('d/m/Y H:i') }}</span>
+        </div>
+    </div>
+    <div class="ticket-detail-title">{{ ticket.titre }}</div>
+    <ul class="ticket-detail-list">
+        <li><span class="ticket-detail-label">Description :</span> <span class="ticket-detail-value">{{ ticket.description }}</span></li>
+        <li><span class="ticket-detail-label">Statut :</span> <span class="ticket-detail-value"><span class="badge badge-statut-{{ ticket.statut.name|lower }}">{{ ticket.statut.value }}</span></span></li>
+        <li><span class="ticket-detail-label">Priorité :</span> <span class="ticket-detail-value"><span class="badge badge-priorite-{{ ticket.priorite.value }}">{{ ticket.priorite.value }}</span></span></li>
+    </ul>
+
+    <form method="post" action="{{ path('technicien_ticket_show', {id: ticket.idTicket}) }}" style="margin-top:18px;">
+        <label for="statut" style="font-weight:600; color:#6a8a1a;">Changer le statut :</label>
+ <select id="statut" name="statut" class="form-control mb-2">
+    <option value="EN_ATTENTE" {% if ticket.statut.name == 'EN_ATTENTE' %}selected{% endif %}>En attente</option>
+    <option value="EN_COURS" {% if ticket.statut.name == 'EN_COURS' %}selected{% endif %}>En cours</option>
+    <option value="TERMINEE" {% if ticket.statut.name == 'TERMINEE' %}selected{% endif %}>Résolu</option>
+</select>
+
+        <button type="submit" name="changer_statut" class="btn btn-primary w-100" style="font-weight:700; font-size:1.08rem;">Mettre à jour le statut</button>
+    </form>
+
+    <div class="comments-section" style="margin-top:36px;">
+        <h3 style="color:#a4c639; font-size:1.3rem; font-weight:700; margin-bottom:18px;">Commentaires / Diagnostics</h3>
+        {% if commentaires is not empty %}
+            <ul class="comments-list" style="list-style:none; padding:0;">
+                {% for commentaire in commentaires %}
+                    <li style="background:#f7fbe8; border-radius:10px; margin-bottom:14px; padding:14px 18px; border:1px solid #a4c639;">
+                        <div style="font-weight:600; color:#6a8a1a; margin-bottom:4px;">
+                            {{ commentaire.utilisateur.nom }} {{ commentaire.utilisateur.prenom }}
+                            <span style="font-size:0.95em; color:#888; font-weight:400; margin-left:8px;">le {{ commentaire.dateCommentaire ? commentaire.dateCommentaire|date('d/m/Y H:i') : '' }}</span>
+                        </div>
+                        <div style="color:#444; font-size:1.05em;">{{ commentaire.contenu }}</div>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <div style="color:#888; font-size:1.05em; margin-bottom:12px;">Aucun commentaire pour ce ticket.</div>
+        {% endif %}
+        <form method="post" style="margin-top:18px;">
+            <label for="contenu_commentaire" style="font-weight:600; color:#6a8a1a;">Ajouter un diagnostic ou commentaire technique :</label>
+            <textarea id="contenu_commentaire" name="contenu_commentaire" rows="2" required style="width:100%; padding:10px 12px; border:1.5px solid #a4c639; border-radius:6px; background:#fffbe8; font-size:1rem; margin-bottom:10px;"></textarea>
+            <button type="submit" class="btn btn-success w-100" style="background:linear-gradient(90deg,#a4c639 0%,#d0e97a 100%); color:#fff; border:none; border-radius:6px; font-size:1.08rem; font-weight:700;">Commenter</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

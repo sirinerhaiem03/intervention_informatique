@@ -1,0 +1,244 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Détail du ticket{% endblock %}
+
+{% block content %}
+<style>
+    .ticket-detail-container {
+        max-width: 520px;
+        margin: 48px auto;
+        background: #fff;
+        border-radius: 22px;
+        box-shadow: 0 8px 32px rgba(164,198,57,0.13);
+        border: 2px solid #a4c639;
+        padding: 38px 30px 30px 30px;
+        position: relative;
+    }
+    .ticket-detail-header {
+        display: flex;
+        align-items: center;
+        gap: 18px;
+        margin-bottom: 24px;
+    }
+    .ticket-avatar {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 2.5px solid #e6e6e6;
+        background: #f6f8f3;
+    }
+    .ticket-user-info {
+        display: flex;
+        flex-direction: column;
+    }
+    .ticket-user-name {
+        font-weight: 700;
+        color: #a4c639;
+        font-size: 1.2rem;
+    }
+    .ticket-date {
+        color: #888;
+        font-size: 0.98rem;
+        font-style: italic;
+    }
+    .ticket-detail-title {
+        color: #222;
+        font-size: 1.7rem;
+        font-weight: 700;
+        margin-bottom: 18px;
+        text-align: left;
+    }
+    .ticket-detail-list {
+        list-style: none;
+        padding: 0;
+        margin: 0 0 24px 0;
+    }
+    .ticket-detail-list li {
+        padding: 14px 0;
+        border-bottom: 1px solid #e6e6e6;
+        font-size: 1.08rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    .ticket-detail-list li:last-child {
+        border-bottom: none;
+    }
+    .ticket-detail-label {
+        font-weight: 600;
+        color: #6a8a1a;
+        min-width: 120px;
+    }
+    .ticket-detail-value {
+        color: #444;
+        text-align: right;
+        flex: 1;
+    }
+    .badge-priorite-Basse { background: #6ab04c; }
+    .badge-priorite-Moyenne { background: #e6b800; }
+    .badge-priorite-Haute { background: #eb4d4b; }
+    .badge-statut-EN_ATTENTE { background: #e67e22; }
+    .badge-statut_EN_COURS { background: #2980b9; }
+    .badge-statut_RESOLU { background: #27ae60; }
+    .badge {
+        display: inline-block;
+        padding: 5px 16px;
+        border-radius: 14px;
+        font-size: 15px;
+        font-weight: 600;
+        color: #fff;
+        margin-left: 8px;
+        box-shadow: 0 1px 4px rgba(164,198,57,0.10);
+        text-shadow: 0 1px 2px rgba(100,100,100,0.10);
+    }
+    .btn-back {
+        display: block;
+        width: 100%;
+        margin-top: 28px;
+        background: linear-gradient(90deg, #a4c639 0%, #d0e97a 100%);
+        color: #fff;
+        border: none;
+        border-radius: 8px;
+        font-size: 1.1rem;
+        font-weight: 700;
+        padding: 14px;
+        text-align: center;
+        text-decoration: none;
+        transition: background 0.2s, color 0.2s;
+    }
+    .btn-back:hover {
+        background: linear-gradient(90deg, #8ebf1b 0%, #eaf7c1 100%);
+        color: #333;
+    }
+    @media (max-width: 600px) {
+        .ticket-detail-container {
+            padding: 18px 4vw 18px 4vw;
+        }
+        .ticket-detail-header {
+            flex-direction: column;
+            gap: 8px;
+        }
+        .ticket-avatar {
+            width: 44px;
+            height: 44px;
+        }
+    }
+    .btn-back-arrow-in-card {
+    position: absolute;
+    top: 18px;
+    left: 18px;
+    z-index: 10;
+    display: inline-block;
+    background: #a4c639;
+    color: #fff;
+    font-size: 1.5rem;
+    font-weight: bold;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    text-align: center;
+    line-height: 36px;
+    box-shadow: 0 2px 8px rgba(164,198,57,0.13);
+    text-decoration: none;
+    transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+}
+.btn-back-arrow-in-card:hover {
+    background: #8ebf1b;
+    color: #fff;
+    box-shadow: 0 4px 16px rgba(164,198,57,0.18);
+    text-decoration: none;
+}
+@media (max-width: 600px) {
+    .btn-back-arrow-in-card {
+        top: 8px;
+        left: 8px;
+        font-size: 1.1rem;
+        width: 28px;
+        height: 28px;
+        line-height: 28px;
+    }
+}
+.ticket-detail-container {
+    position: relative;
+}
+</style>
+<div class="ticket-detail-container">
+    <a href="{{ path('app_tickets') }}" class="btn-back-arrow-in-card" title="Retour à la liste">&#8592;</a>
+    <div class="ticket-detail-header">
+        <img src="{{ asset('assets/images/default-user.png') }}" class="ticket-avatar" alt="avatar">
+        <div class="ticket-user-info">
+            <span class="ticket-user-name">{{ app.user.nom }} {{ app.user.prenom }}</span>
+            <span class="ticket-date">Créé le {{ ticket.dateCreation|date('d/m/Y H:i') }}</span>
+        </div>
+    </div>
+    <div class="ticket-detail-title">{{ ticket.titre }}</div>
+    <ul class="ticket-detail-list">
+        <li><span class="ticket-detail-label">Description :</span> <span class="ticket-detail-value">{{ ticket.description }}</span></li>
+        <li><span class="ticket-detail-label">Statut :</span> <span class="ticket-detail-value"><span class="badge badge-statut-{{ ticket.statut.name|replace({'_':'_'}) }}">{{ ticket.statut.value }}</span></span></li>
+        <li><span class="ticket-detail-label">Priorité :</span> <span class="ticket-detail-value"><span class="badge badge-priorite-{{ ticket.priorite.value }}">{{ ticket.priorite.value }}</span></span></li>
+    </ul>
+    <button id="toggle-edit-form" class="btn btn-warning w-100 mt-2" style="font-weight:600; font-size:1.08rem;">Modifier</button>
+
+    {% if ticket.statut.name == 'EN_ATTENTE' and ticket.utilisateur.idUtilisateur == app.user.idUtilisateur %}
+        <form method="post" action="{{ path('ticket_delete', {id: ticket.idTicket}) }}" onsubmit="return confirm('Voulez-vous vraiment supprimer ce ticket ?');" style="margin-top:10px;">
+            <button type="submit" class="btn btn-danger w-100" style="font-weight:700; font-size:1.08rem;">Supprimer</button>
+        </form>
+    {% endif %}
+
+    <form id="edit-form" method="post" style="display:none; margin-top:18px;">
+        <label for="titre">Titre</label>
+        <input type="text" id="titre" name="titre" value="{{ ticket.titre }}" required class="form-control mb-3">
+
+        <label for="description">Description</label>
+        <textarea id="description" name="description" rows="3" required class="form-control mb-3">{{ ticket.description }}</textarea>
+
+        <label for="priorite">Priorité</label>
+        <select id="priorite" name="priorite" class="form-control mb-3">
+            <option value="Basse" {{ ticket.priorite.value == 'Basse' ? 'selected' : '' }}>Basse</option>
+            <option value="Moyenne" {{ ticket.priorite.value == 'Moyenne' ? 'selected' : '' }}>Moyenne</option>
+            <option value="Haute" {{ ticket.priorite.value == 'Haute' ? 'selected' : '' }}>Haute</option>
+        </select>
+
+        <button type="submit" class="btn btn-success w-100">Enregistrer</button>
+        <button type="button" id="cancel-edit" class="btn btn-secondary w-100 mt-2">Annuler</button>
+    </form>
+
+    {# Bloc Commentaires #}
+    <div class="comments-section" style="margin-top:36px;">
+        <h3 style="color:#a4c639; font-size:1.3rem; font-weight:700; margin-bottom:18px;">Commentaires</h3>
+        {% if commentaires is not empty %}
+            <ul class="comments-list" style="list-style:none; padding:0;">
+                {% for commentaire in commentaires %}
+                    <li style="background:#f7fbe8; border-radius:10px; margin-bottom:14px; padding:14px 18px; border:1px solid #a4c639;">
+                        <div style="font-weight:600; color:#6a8a1a; margin-bottom:4px;">
+                            {{ commentaire.utilisateur.nom }} {{ commentaire.utilisateur.prenom }}
+                            <span style="font-size:0.95em; color:#888; font-weight:400; margin-left:8px;">le {{ commentaire.dateCommentaire ? commentaire.dateCommentaire|date('d/m/Y H:i') : '' }}</span>
+                        </div>
+                        <div style="color:#444; font-size:1.05em;">{{ commentaire.contenu }}</div>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <div style="color:#888; font-size:1.05em; margin-bottom:12px;">Aucun commentaire pour ce ticket.</div>
+        {% endif %}
+        <form method="post" style="margin-top:18px;">
+            <label for="contenu_commentaire" style="font-weight:600; color:#6a8a1a;">Ajouter un commentaire :</label>
+            <textarea id="contenu_commentaire" name="contenu_commentaire" rows="2" required style="width:100%; padding:10px 12px; border:1.5px solid #a4c639; border-radius:6px; background:#fffbe8; font-size:1rem; margin-bottom:10px;"></textarea>
+            <button type="submit" class="btn btn-success w-100" style="background:linear-gradient(90deg,#a4c639 0%,#d0e97a 100%); color:#fff; border:none; border-radius:6px; font-size:1.08rem; font-weight:700;">Commenter</button>
+        </form>
+    </div>
+
+    <script>
+        document.getElementById('toggle-edit-form').onclick = function() {
+            document.getElementById('edit-form').style.display = 'block';
+            this.style.display = 'none';
+        };
+        document.getElementById('cancel-edit').onclick = function() {
+            document.getElementById('edit-form').style.display = 'none';
+            document.getElementById('toggle-edit-form').style.display = 'block';
+        };
+    </script>
+</div>
+
+{% endblock %}

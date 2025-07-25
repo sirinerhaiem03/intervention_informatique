@@ -1,0 +1,39 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Tous les tickets (Technicien){% endblock %}
+
+{% block content %}
+<div class="tickets-wrapper">
+    <h2 style="color:#a4c639; font-weight:700; margin-bottom:32px; text-align:center;">Tous les tickets</h2>
+    <table class="table table-bordered table-striped">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Titre</th>
+                <th>Demandeur</th>
+                <th>Statut</th>
+                <th>Priorité</th>
+                <th>Date création</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for ticket in tickets %}
+            <tr>
+                <td>{{ ticket.idTicket }}</td>
+                <td>{{ ticket.titre }}</td>
+                <td>{{ ticket.utilisateur.nom }} {{ ticket.utilisateur.prenom }}</td>
+                <td><span class="badge badge-statut-{{ ticket.statut.name|lower }}">{{ ticket.statut.value }}</span></td>
+                <td><span class="badge badge-priorite-{{ ticket.priorite.value }}">{{ ticket.priorite.value }}</span></td>
+                <td>{{ ticket.dateCreation ? ticket.dateCreation|date('d/m/Y H:i') : '' }}</td>
+                <td>
+                    <a href="{{ path('technicien_ticket_show', {id: ticket.idTicket}) }}" class="btn btn-sm btn-outline-primary">Voir</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr><td colspan="7" class="text-center">Aucun ticket trouvé.</td></tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

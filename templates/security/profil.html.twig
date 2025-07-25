@@ -1,0 +1,91 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Modifier mon profil{% endblock %}
+
+{% block content %}
+<style>
+    body {
+        background: #f6f8f3;
+    }
+    .profil-wrapper {
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 40px 16px;
+    }
+    .profil-card {
+        background: #fff;
+        border-radius: 18px;
+        box-shadow: 0 2px 8px rgba(164,198,57,0.10);
+        padding: 32px 28px;
+        border: 1.5px solid #a4c639;
+    }
+    .profil-card h2 {
+        color: #a4c639;
+        font-size: 2rem;
+        text-align: center;
+        margin-bottom: 24px;
+        font-weight: 700;
+    }
+    .profil-card label {
+        font-weight: 600;
+        color: #6a8a1a;
+        margin-bottom: 6px;
+        display: block;
+    }
+    .profil-card input {
+        width: 100%;
+        padding: 10px 12px;
+        margin-bottom: 18px;
+        border: 1.5px solid #a4c639;
+        border-radius: 6px;
+        background: #f7fbe8;
+        font-size: 1rem;
+        transition: border 0.2s;
+    }
+    .profil-card input:focus {
+        border-color: #8ebf1b;
+        outline: none;
+    }
+    .profil-card button {
+        width: 100%;
+        padding: 12px;
+        background: linear-gradient(90deg, #a4c639 0%, #d0e97a 100%);
+        color: #fff;
+        border: none;
+        border-radius: 6px;
+        font-size: 1.1rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: background 0.2s;
+        box-shadow: 0 2px 8px rgba(164,198,57,0.10);
+        text-shadow: 0 1px 2px rgba(100,100,100,0.10);
+        margin-top: 10px;
+    }
+    .profil-card button:hover {
+        background: linear-gradient(90deg, #8ebf1b 0%, #eaf7c1 100%);
+        color: #333;
+    }
+</style>
+
+<div class="profil-wrapper">
+    <div class="profil-card">
+        <h2>Modifier mon profil</h2>
+
+        <form method="post" action="{{ path('modifier_profil') }}">
+            <label for="nom">Nom</label>
+            <input type="text" id="nom" name="nom" value="{{ app.user.nom }}" required>
+
+            <label for="prenom">Prénom</label>
+            <input type="text" id="prenom" name="prenom" value="{{ app.user.prenom }}" required>
+
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" value="{{ app.user.email }}" required>
+
+            <label for="password">Nouveau mot de passe </label>
+            <input type="password" id="password" name="password">
+
+            <button type="submit">Enregistrer</button>
+        </form>
+    </div>
+</div>
+{% endblock %}
