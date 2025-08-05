@@ -60,9 +60,18 @@ class TechnicienController extends AbstractController
             }
         }
         $commentaires = $ticket->getCommentaires();
-        return $this->render('technicien/ticket_show.html.twig', [
+        return $this->render('Technicien/ticket_show.html.twig', [
             'ticket' => $ticket,
             'commentaires' => $commentaires,
+        ]);
+    }
+     #[Route('/home', name: 'home_technicien')]
+    public function index_tech(): Response
+    {
+
+
+        return $this->render('Technicien/basetech.html.twig', [
+
         ]);
     }
 }

@@ -1,0 +1,311 @@
+{% extends 'Responsable/homeadmin.html.twig' %}
+
+{% block stylesheets %}
+{{ parent() }}
+<style>
+    /* Conteneur principal */
+    .ticket-detail-container {
+        background: #ffffff;
+        border-radius: 10px;
+        padding: 30px;
+        margin: 20px auto;
+        max-width: 800px;
+        box-shadow: 0 0 20px rgba(0,0,0,0.05);
+    }
+
+    /* En-tête */
+    .ticket-detail-header {
+        display: flex;
+        align-items: center;
+        margin-bottom: 25px;
+        padding-bottom: 15px;
+        border-bottom: 1px solid #f0f0f0;
+    }
+
+    /* Avatar */
+    .ticket-avatar {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        object-fit: cover;
+        margin-right: 20px;
+        border: 2px solid #e0e0e0;
+    }
+
+    /* Infos utilisateur */
+    .ticket-user-info {
+        flex: 1;
+    }
+
+    .ticket-user-name {
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 5px;
+    }
+
+    .ticket-date {
+        color: #777;
+        font-size: 0.9rem;
+    }
+
+    /* Titre du ticket */
+    .ticket-detail-title {
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 25px;
+    }
+
+    /* Liste des détails */
+    .ticket-detail-list {
+        list-style: none;
+        padding: 0;
+        margin: 0 0 30px 0;
+    }
+
+    .ticket-detail-list li {
+        padding: 15px 0;
+        border-bottom: 1px solid #f0f0f0;
+        display: flex;
+    }
+
+    .ticket-detail-list li:last-child {
+        border-bottom: none;
+    }
+
+    .ticket-detail-label {
+        font-weight: 500;
+        color: #555;
+        min-width: 120px;
+    }
+
+    .ticket-detail-value {
+        color: #333;
+        flex: 1;
+    }
+
+    /* Badges */
+    .badge {
+        display: inline-block;
+        padding: 5px 12px;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: 500;
+        color: white;
+    }
+
+    .badge-priorite-Basse { background-color: #28a745; }
+    .badge-priorite-Moyenne { background-color: #ffc107; color: #333; }
+    .badge-priorite-Haute { background-color: #dc3545; }
+
+    .badge-statut-EN_ATTENTE { background-color: #6c757d; }
+    .badge-statut-EN_COURS { background-color: #17a2b8; }
+    .badge-statut-RESOLU { background-color: #28a745; }
+
+    /* Boutons */
+    .btn-back {
+        background: linear-gradient(to right, #4CAF50, #2E7D32);
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 4px;
+        font-weight: 500;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        margin-top: 20px;
+        text-decoration: none;
+    }
+
+    .btn-back:hover {
+        background: linear-gradient(to right, #3e8e41, #1e5e20);
+        color: white;
+    }
+
+    /* Section commentaires */
+    .comments-section {
+        margin-top: 40px;
+        padding-top: 20px;
+        border-top: 1px solid #f0f0f0;
+    }
+
+    .comments-section h3 {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 20px;
+    }
+
+    .comments-list {
+        list-style: none;
+        padding: 0;
+        margin: 0 0 20px 0;
+    }
+
+    .comment-item {
+        background: #f8f9fa;
+        border-radius: 6px;
+        padding: 15px;
+        margin-bottom: 15px;
+        border-left: 3px solid #4CAF50;
+    }
+
+    .comment-author {
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 5px;
+    }
+
+    .comment-date {
+        color: #777;
+        font-size: 0.85rem;
+        margin-bottom: 10px;
+    }
+
+    .comment-content {
+        color: #555;
+    }
+
+    .comment-form textarea {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        margin-bottom: 10px;
+        min-height: 100px;
+    }
+
+    /* Formulaire d'édition */
+    .edit-form {
+        background: #f8f9fa;
+        padding: 20px;
+        border-radius: 6px;
+        margin-top: 30px;
+    }
+
+    .edit-form .form-group {
+        margin-bottom: 15px;
+    }
+
+    .edit-form label {
+        font-weight: 500;
+        color: #555;
+        display: block;
+        margin-bottom: 5px;
+    }
+
+    .edit-form input,
+    .edit-form textarea,
+    .edit-form select {
+        width: 100%;
+        padding: 8px 12px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        .ticket-detail-container {
+            padding: 20px;
+        }
+
+        .ticket-detail-header {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .ticket-avatar {
+            margin-right: 0;
+            margin-bottom: 15px;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block Content %}
+<div class="content-wrapper">
+    <div class="container-fluid">
+        <div class="ticket-detail-container">
+            <a href="{{ path('tickets_admin') }}" class="btn-back">
+                <i class="mdi mdi-arrow-left"></i>
+            </a>
+            <a href="{{ path('tickets_auto_attribuer') }}" class="btn btn-success mb-3">Attribuer automatiquement les tickets</a>
+
+            <div class="ticket-detail-header">
+                <img src="{{ asset('assets/images/default-user.png') }}" class="ticket-avatar" alt="avatar">
+                <div class="ticket-user-info">
+                    <div class="ticket-user-name">{{ app.user.nom }} {{ app.user.prenom }}</div>
+                    <div class="ticket-date">Créé le {{ ticket.dateCreation|date('d/m/Y H:i') }}</div>
+                </div>
+            </div>
+
+            <h1 class="ticket-detail-title">{{ ticket.titre }}</h1>
+
+            <ul class="ticket-detail-list">
+                <li>
+                    <span class="ticket-detail-label">Description :</span>
+                    <span class="ticket-detail-value">{{ ticket.description }}</span>
+                </li>
+                <li>
+                    <span class="ticket-detail-label">Statut :</span>
+                    <span class="ticket-detail-value">
+                        <span class="badge badge-statut-{{ ticket.statut.name }}">{{ ticket.statut.value }}</span>
+                    </span>
+                </li>
+                <li>
+                    <span class="ticket-detail-label">Priorité :</span>
+                    <span class="ticket-detail-value">
+                        <span class="badge badge-priorite-{{ ticket.priorite.value }}">{{ ticket.priorite.value }}</span>
+                    </span>
+                </li>
+                <li>
+                    <span class="ticket-detail-label">Technicien :</span>
+                    <span class="ticket-detail-value">
+                        {% if ticket.technicien %}
+                            {{ ticket.technicien.nom }} {{ ticket.technicien.prenom }}
+                        {% else %}
+                            <span class="text-danger">Non attribué</span>
+                        {% endif %}
+                    </span>
+                </li>
+            </ul>
+
+            {% if ticket.statut.name == 'TERMINE' and ticket.utilisateur.idUtilisateur == app.user.idUtilisateur %}
+                <form method="post" action="{{ path('ticket_delete', {id: ticket.idTicket}) }}" onsubmit="return confirm('Voulez-vous vraiment supprimer ce ticket ?');">
+                    <button type="submit" class="btn btn-danger">
+                        <i class="mdi mdi-delete"></i> Supprimer
+                    </button>
+                </form>
+            {% endif %}
+
+            <div class="comments-section">
+                <h3><i class="mdi mdi-comment-multiple-outline"></i> Commentaires</h3>
+
+                {% if commentaires is not empty %}
+                    <ul class="comments-list">
+                        {% for commentaire in commentaires %}
+                            <li class="comment-item">
+                                <div class="comment-author">
+                                    {{ commentaire.utilisateur.nom }} {{ commentaire.utilisateur.prenom }}
+                                </div>
+                                <div class="comment-date">
+                                    le {{ commentaire.dateCommentaire ? commentaire.dateCommentaire|date('d/m/Y H:i') : '' }}
+                                </div>
+                                <div class="comment-content">
+                                    {{ commentaire.contenu }}
+                                </div>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <div class="alert alert-info">
+                        Aucun commentaire pour ce ticket.
+                    </div>
+                {% endif %}
+
+
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

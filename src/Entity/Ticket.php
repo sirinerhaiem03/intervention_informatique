@@ -40,6 +40,11 @@ class Ticket
     #[ORM\JoinColumn(name: 'id_utilisateur', referencedColumnName: 'id_utilisateur', nullable: false)]
     private ?Utilisateur $utilisateur = null;
 
+    #[ORM\ManyToOne(targetEntity: Utilisateur::class)]
+    #[ORM\JoinColumn(name: 'id_technicien', referencedColumnName: 'id_utilisateur', nullable: true)]
+    private ?Utilisateur $technicien = null;
+
+
     #[ORM\OneToMany(mappedBy: 'ticket', targetEntity: Commentaire::class)]
     private Collection $commentaires;
 
@@ -135,4 +140,16 @@ public function setUtilisateur(?Utilisateur $utilisateur): static
 
     return $this;
 }
+
+public function getTechnicien(): ?Utilisateur
+{
+    return $this->technicien;
+}
+
+public function setTechnicien(?Utilisateur $technicien): static
+{
+    $this->technicien = $technicien;
+    return $this;
+}
+
 }

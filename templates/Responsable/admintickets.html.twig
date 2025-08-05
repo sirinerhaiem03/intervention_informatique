@@ -1,0 +1,287 @@
+{% extends 'Responsable/homeadmin.html.twig' %}
+
+{% block stylesheets %}
+{{ parent() }}
+<style>
+    /* Styles spécifiques pour la page des tickets */
+    .tickets-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+    }
+
+    .add-ticket-btn {
+        background: linear-gradient(to right, #4CAF50, #2E7D32);
+        color: white;
+        border: none;
+        padding: 0.75rem 1.5rem;
+        border-radius: 4px;
+        font-weight: 500;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition: all 0.3s;
+    }
+
+    .add-ticket-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+
+    #add-ticket-form {
+        background: white;
+        padding: 2rem;
+        border-radius: 8px;
+        box-shadow: 0 0 20px rgba(0,0,0,0.05);
+        margin-bottom: 2rem;
+    }
+
+    #add-ticket-form h3 {
+        color: #2E7D32;
+        margin-bottom: 1.5rem;
+    }
+
+    #add-ticket-form label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 500;
+        color: #495057;
+    }
+
+    #add-ticket-form input,
+    #add-ticket-form textarea,
+    #add-ticket-form select {
+        width: 100%;
+        padding: 0.75rem;
+        margin-bottom: 1.5rem;
+        border: 1px solid #ced4da;
+        border-radius: 4px;
+        font-size: 1rem;
+    }
+
+    #add-ticket-form textarea {
+        min-height: 120px;
+    }
+
+    #add-ticket-form button[type="submit"] {
+        background: linear-gradient(to right, #4CAF50, #2E7D32);
+        color: white;
+        border: none;
+        padding: 0.75rem 1.5rem;
+        border-radius: 4px;
+        margin-right: 1rem;
+        cursor: pointer;
+    }
+
+    #add-ticket-form button[type="button"] {
+        background: #f8f9fa;
+        color: #495057;
+        border: 1px solid #ced4da;
+        padding: 0.75rem 1.5rem;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+
+    .tickets-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 1.5rem;
+    }
+
+    .ticket-card {
+        background: white;
+        border-radius: 8px;
+        padding: 1.5rem;
+        box-shadow: 0 0 15px rgba(0,0,0,0.05);
+        transition: transform 0.3s;
+    }
+
+    .ticket-card:hover {
+        transform: translateY(-5px);
+    }
+
+    .ticket-user {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        margin-bottom: 1rem;
+    }
+
+    .ticket-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        object-fit: cover;
+    }
+
+    .ticket-title {
+        font-size: 1.25rem;
+        font-weight: 500;
+        margin-bottom: 0.75rem;
+        color: #343a40;
+    }
+
+    .ticket-description {
+        color: #6c757d;
+        margin-bottom: 1.25rem;
+        line-height: 1.5;
+    }
+
+    .ticket-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+        margin-bottom: 1.25rem;
+    }
+
+    .badge {
+        padding: 0.35em 0.65em;
+        font-size: 0.875em;
+        font-weight: 500;
+        border-radius: 4px;
+    }
+
+    .badge-priorite-Basse {
+        background-color: #d4edda;
+        color: #155724;
+    }
+
+    .badge-priorite-Moyenne {
+        background-color: #fff3cd;
+        color: #856404;
+    }
+
+    .badge-priorite-Haute {
+        background-color: #f8d7da;
+        color: #721c24;
+    }
+
+    .ticket-date {
+        color: #6c757d;
+        font-size: 0.875rem;
+    }
+
+    .no-tickets {
+        text-align: center;
+        padding: 2rem;
+        color: #6c757d;
+        grid-column: 1 / -1;
+    }
+
+    .btn-outline-primary {
+        color: #4CAF50;
+        border-color: #4CAF50;
+    }
+
+    .btn-outline-primary:hover {
+        background-color: #4CAF50;
+        color: white;
+    }
+</style>
+{% endblock %}
+
+{% block Content %}
+<div class="content-wrapper">
+    <div class="container-fluid">
+        <div class="page-header">
+            <h3 class="page-title">
+                <span class="page-title-icon bg-gradient-primary text-white me-2">
+                    <i class="mdi mdi-ticket"></i>
+                </span> Gestion des Tickets
+            </h3>
+            <nav aria-label="breadcrumb">
+                <ul class="breadcrumb">
+                    <li class="breadcrumb-item active" aria-current="page">
+                        <span></span>Liste des tickets <i class="mdi mdi-alert-circle-outline icon-sm text-primary align-middle"></i>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="tickets-header">
+                            <h4 class="card-title">Liste des tickets</h4>
+                            <button class="add-ticket-btn" id="show-add-ticket-btn" type="button">
+                                <i class="mdi mdi-plus-circle-outline"></i> Ajouter un ticket
+                            </button>
+                        </div>
+
+                        <div class="card mb-4" id="add-ticket-form" style="display: none;">
+                            <div class="card-body">
+                                <h4 class="card-title">Ajouter un ticket</h4>
+                                <form method="post" action="{{ path('ticket_store') }}" class="forms-sample">
+                                    <div class="form-group">
+                                        <label for="titre">Titre</label>
+                                        <input type="text" class="form-control" id="titre" name="titre" placeholder="Titre du ticket" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="description">Description</label>
+                                        <textarea class="form-control" id="description" name="description" rows="4" required></textarea>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="priorite">Priorité</label>
+                                        <select class="form-control" id="priorite" name="priorite" required>
+                                            <option value="Basse">Basse</option>
+                                            <option value="Moyenne" selected>Moyenne</option>
+                                            <option value="Haute">Haute</option>
+                                        </select>
+                                    </div>
+                                    <input type="hidden" name="statut" value="En attente">
+                                    <button type="submit" class="btn btn-gradient-primary me-2">Créer le ticket</button>
+                                    <button type="button" class="btn btn-light" id="hide-add-ticket-btn">Annuler</button>
+                                </form>
+                            </div>
+                        </div>
+
+                        <div class="tickets-grid">
+                            {% for ticket in tickets %}
+                                <div class="ticket-card">
+                                    <div class="ticket-user">
+                                        <img src="{{ asset('assets/images/default-user.png') }}" class="ticket-avatar" alt="avatar">
+                                        <div>
+                                            <div>{{ ticket.utilisateur.nom }} {{ ticket.utilisateur.prenom }}</div>
+                                            <small class="text-muted">{{ ticket.dateCreation ? ticket.dateCreation|date('d/m/Y H:i') : '' }}</small>
+                                        </div>
+                                    </div>
+                                    <div class="ticket-title">{{ ticket.titre }}</div>
+                                    <div class="ticket-description">{{ ticket.description|u.truncate(100, '...') }}</div>
+                                    <div class="ticket-meta">
+                                        <span class="badge {% if ticket.statut.value == 'En attente' %}badge-warning{% elseif ticket.statut.value == 'En cours' %}badge-info{% else %}badge-success{% endif %}">
+                                            {{ ticket.statut.value }}
+                                        </span>
+                                        <span class="badge badge-priorite-{{ ticket.priorite.value }}">
+                                            {{ ticket.priorite.value }}
+                                        </span>
+                                    </div>
+                                    <a href="{{ path('adminticket_show', {id: ticket.idTicket}) }}" class="btn btn-sm btn-outline-primary">Voir le ticket</a>
+                                </div>
+                            {% else %}
+                                <div class="no-tickets">
+                                    <i class="mdi mdi-information-outline" style="font-size: 2rem;"></i>
+                                    <h5>Aucun ticket trouvé</h5>
+                                    <p>Commencez par créer votre premier ticket</p>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.getElementById('show-add-ticket-btn').onclick = function() {
+        document.getElementById('add-ticket-form').style.display = 'block';
+        window.scrollTo({ top: document.getElementById('add-ticket-form').offsetTop - 40, behavior: 'smooth' });
+    };
+    document.getElementById('hide-add-ticket-btn').onclick = function() {
+        document.getElementById('add-ticket-form').style.display = 'none';
+    };
+</script>
+{% endblock %}
